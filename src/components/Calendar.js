@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ReactCalendar from 'react-calendar';
@@ -8,9 +8,8 @@ const useStyles = makeStyles((theme) => ({
   calendar: { width: 'auto' },
 }));
 
-const Calendar = ({ holidayList }) => {
+const Calendar = ({ now, holidayList }) => {
   const classes = useStyles();
-  const [calendarDate, setCalendarDate] = useState(new Date());
 
   const getFormatDate = (date) => {
     return `${date.getFullYear()}${('0' + (date.getMonth() + 1)).slice(-2)}${(
@@ -48,8 +47,7 @@ const Calendar = ({ holidayList }) => {
       className={classes.calendar}
       calendarType='US'
       locale='ja-JP'
-      onChange={setCalendarDate}
-      value={calendarDate}
+      value={now.toDate()}
       tileClassName={getTileClass}
       tileContent={getTileContent}
       minDate={new Date('2021/01/01')}

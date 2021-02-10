@@ -6,8 +6,6 @@ import DisplayDate from './components/DisplayDate';
 import Calendar from './components/Calendar';
 import dayjs from 'dayjs';
 
-const UPDATE_INTERVAL = 500;
-
 const useStyles = makeStyles((theme) => ({
   layout: {
     width: 'auto',
@@ -34,42 +32,42 @@ const App = () => {
   const [now, setNow] = useState(dayjs());
   const [publicHolidayList, setPublicHolidayList] = useState([]);
   const [nextHoliday, setNextHoliday] = useState(null);
+  const [dateImage, setDateImage] = useState(null);
   const [update, setUpdate] = useState(false);
 
   useEffect(() => {
-    const response = [
-      { date: '20210211', name: '建国記念日' },
-      { date: '20210223', name: '天皇誕生日' },
-    ];
-    const formatResponse = response.map((holiday) => ({
+    const holidayResponse = require('./dummyData/publicHoliday.json');
+    const formatResponse = holidayResponse.map((holiday) => ({
       ...holiday,
       date: dayjs(holiday.date),
     }));
     setPublicHolidayList(formatResponse);
     setUpdate(true);
-
     const interval = setInterval(() => {
-      const newNow = dayjs();
-      if (newNow.format('D') !== now.format('D')) {
-        setUpdate(true);
-      }
-      setNow(newNow);
-    }, UPDATE_INTERVAL);
+      setNow((prev) => {
+        const newNow = prev.add(1, 'second');
+        if (newNow.date() !== prev.date()) {
+          setUpdate(true);
+        }
+        return newNow;
+      });
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (!update) return;
     setUpdate(false);
+    setDateImage(require('./dummyData/image.json'));
     const isPublicHoliday = publicHolidayList.some(
       (holiday) => holiday.date.format('YYYYMMDD') === now.format('YYYYMMDD')
     );
     if (now.day() === 6 || now.day() === 0 || isPublicHoliday) {
       setNextHoliday(null);
     } else {
-      const nextSaturday = now.day(6);
+      const nextSaturday = dayjs(now.day(6).format('YYYYMMDD'));
       const nextPublicHoliday = publicHolidayList.find((holiday) => {
-        return now.format('YYYYMMDD') < holiday.date.format('YYYYMMDD');
+        return holiday.date.isAfter(now);
       });
 
       if (!nextPublicHoliday || nextSaturday.isBefore(nextPublicHoliday.date)) {
@@ -93,10 +91,14 @@ const App = () => {
             alignItems='center'
           >
             <Grid item>
-              <DisplayDate now={now} nextHoliday={nextHoliday} />
+              <DisplayDate
+                now={now}
+                nextHoliday={nextHoliday}
+                image={dateImage}
+              />
             </Grid>
             <Grid item>
-              <Calendar holidayList={publicHolidayList} />
+              <Calendar now={now} holidayList={publicHolidayList} />
             </Grid>
           </Grid>
         </Paper>

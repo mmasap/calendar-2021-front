@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
-import woman from '../images/kaisya_woman.png';
 
 const JAPANESE_DAY = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -12,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DisplayDate = ({ now, nextHoliday }) => {
+const DisplayDate = ({ now, nextHoliday, image }) => {
   const classes = useStyles();
   const remainSeconds = nextHoliday ? nextHoliday.unix() - now.unix() : 0;
 
@@ -24,7 +23,13 @@ const DisplayDate = ({ now, nextHoliday }) => {
       <Grid item>
         <Grid container spacing={2}>
           <Grid item>
-            <img src={woman} className={classes.image} alt='tests' />
+            {image && (
+              <img
+                src={image.image_data}
+                className={classes.image}
+                alt={image.image_name}
+              />
+            )}
           </Grid>
           <Grid item>
             <Grid
