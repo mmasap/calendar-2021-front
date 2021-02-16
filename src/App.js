@@ -1,10 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, CssBaseline, Paper } from '@material-ui/core';
+import axios from 'axios';
+import dayjs from './lib/dayjs';
 import Header from './components/Header';
 import DisplayDate from './components/DisplayDate';
 import Calendar from './components/Calendar';
-import dayjs from 'dayjs';
 
 const useStyles = makeStyles((theme) => ({
   layout: {
@@ -30,18 +31,34 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
   const [now, setNow] = useState(dayjs());
+  // const [now, setNow] = useState(dayjs('2021-02-19 23:59:55'));
   const [publicHolidayList, setPublicHolidayList] = useState([]);
   const [nextHoliday, setNextHoliday] = useState(null);
   const [dateImage, setDateImage] = useState(null);
   const [update, setUpdate] = useState(false);
 
+  const getPublicHoliday = async () => {
+    const holidayResponse = await axios.get(
+      'https://sxn5moekdl.execute-api.ap-northeast-1.amazonaws.com/dev/publicHolidays'
+    );
+    setPublicHolidayList(
+      holidayResponse.data.map((holiday) => ({
+        ...holiday,
+        date: dayjs(holiday.date),
+      }))
+    );
+  };
+
+  const getImage = async () => {
+    const imageResponse = await axios.post(
+      'https://sxn5moekdl.execute-api.ap-northeast-1.amazonaws.com/dev/todaysImage',
+      { date: now.format('YYYY-MM-DD') }
+    );
+    setDateImage(imageResponse.data);
+  };
+
   useEffect(() => {
-    const holidayResponse = require('./dummyData/publicHoliday.json');
-    const formatResponse = holidayResponse.map((holiday) => ({
-      ...holiday,
-      date: dayjs(holiday.date),
-    }));
-    setPublicHolidayList(formatResponse);
+    getPublicHoliday();
     setUpdate(true);
     const interval = setInterval(() => {
       setNow((prev) => {
@@ -58,7 +75,7 @@ const App = () => {
   useEffect(() => {
     if (!update) return;
     setUpdate(false);
-    setDateImage(require('./dummyData/image.json'));
+    getImage();
     const isPublicHoliday = publicHolidayList.some(
       (holiday) => holiday.date.format('YYYYMMDD') === now.format('YYYYMMDD')
     );

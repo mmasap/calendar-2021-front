@@ -2,8 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
 
-const JAPANESE_DAY = ['日', '月', '火', '水', '木', '金', '土'];
-
 const useStyles = makeStyles((theme) => ({
   image: {
     width: 128,
@@ -25,7 +23,7 @@ const DisplayDate = ({ now, nextHoliday, image }) => {
           <Grid item>
             {image && (
               <img
-                src={image.image_data}
+                src={`data:image/png;base64,${image.image_data}`}
                 className={classes.image}
                 alt={image.image_name}
               />
@@ -59,12 +57,7 @@ const DisplayDate = ({ now, nextHoliday, image }) => {
   );
 };
 
-const getCurrentTime = (now) => {
-  const date = now.format('YYYY/MM/DD');
-  const day = JAPANESE_DAY[now.day()];
-  const time = now.format('HH:mm:ss');
-  return `${date} (${day}) ${time}`;
-};
+const getCurrentTime = (now) => now.format('YYYY/MM/DD (dd) HH:mm:ss');
 
 const getRemainMinutes = (remainSeconds) => {
   const minutes = Math.floor(remainSeconds / 60);
