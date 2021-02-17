@@ -30,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
 
 const App = () => {
   const classes = useStyles();
-  // const [now, setNow] = useState(dayjs());
-  const [now, setNow] = useState(dayjs('2021-02-14 23:59:50'));
+  const [now, setNow] = useState(dayjs());
+  // const [now, setNow] = useState(dayjs('2021-02-14 23:59:50'));
   const [publicHolidayList, setPublicHolidayList] = useState([]);
   const [nextHoliday, setNextHoliday] = useState(null);
   const [dateImage, setDateImage] = useState(null);
