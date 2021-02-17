@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ReactCalendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import '../css/Calendar.css';
 
 const useStyles = makeStyles((theme) => ({
   calendar: { width: 'auto' },
