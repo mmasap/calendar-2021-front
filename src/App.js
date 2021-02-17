@@ -30,12 +30,12 @@ const useStyles = makeStyles((theme) => ({
 
 const App = () => {
   const classes = useStyles();
-  const [now, setNow] = useState(dayjs());
-  // const [now, setNow] = useState(dayjs('2021-02-19 23:59:55'));
+  // const [now, setNow] = useState(dayjs());
+  const [now, setNow] = useState(dayjs('2021-02-14 23:59:50'));
   const [publicHolidayList, setPublicHolidayList] = useState([]);
   const [nextHoliday, setNextHoliday] = useState(null);
   const [dateImage, setDateImage] = useState(null);
-  const [update, setUpdate] = useState(false);
+  const [update, setUpdate] = useState(true);
 
   const getPublicHoliday = async () => {
     const holidayResponse = await axios.get(
@@ -59,7 +59,6 @@ const App = () => {
 
   useEffect(() => {
     getPublicHoliday();
-    setUpdate(true);
     const interval = setInterval(() => {
       setNow((prev) => {
         const newNow = prev.add(1, 'second');
@@ -73,7 +72,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!update) return;
+    if (!update || publicHolidayList.length === 0) return;
     setUpdate(false);
     getImage();
     const isPublicHoliday = publicHolidayList.some(
@@ -93,7 +92,7 @@ const App = () => {
         setNextHoliday(nextPublicHoliday.date);
       }
     }
-  }, [update, publicHolidayList, now]);
+  }, [update, publicHolidayList]);
 
   return (
     <Fragment>
